@@ -61,7 +61,7 @@ public class Field {
 			Field field = iterator.next();
 
 			if (field.isMine()) {
-				this.incrementMinesNum();
+				incrementMinesNum();
 			}
 		}
 	}
@@ -141,8 +141,6 @@ public class Field {
 			public void onMouseDown(MouseDownEvent event) {
 				switch (event.getNativeButton()) {
 				case NativeEvent.BUTTON_RIGHT:
-					event.stopPropagation();
-					event.preventDefault();
 					toggleFlag();
 					break;
 				}

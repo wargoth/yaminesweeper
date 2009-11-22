@@ -121,7 +121,7 @@ public class Minefield {
 					event.preventDefault();
 				}
 			};
-			grid.sinkEvents(Event.ONCONTEXTMENU);
+			grid.sinkEvents(Event.ONCONTEXTMENU | Event.ONMOUSEDOWN | Event.ONDBLCLICK);
 			grid.addStyleName("grid");
 		}
 		return grid;

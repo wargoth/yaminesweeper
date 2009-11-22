@@ -2,11 +2,12 @@ body {
 	margin:0;
 	padding: 0;
 	background: #cde !important;
+	font-size: 14px !important;
 }
 
 body,table td,select {
 	font-family: Arial Unicode MS, Arial, sans-serif;
-	font-size: small;
+	font-size: 14px;
 }
 
 div.content {
