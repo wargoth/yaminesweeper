@@ -1,3 +1,25 @@
+body {
+	margin:0;
+	padding: 0;
+	background: #cde !important;
+}
+
+body,table td,select {
+	font-family: Arial Unicode MS, Arial, sans-serif;
+	font-size: small;
+}
+
+div.content {
+	width: 600px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 250%;
+	padding: 1em;
+	margin: 0;
+}
+
 table.grid {
 	border: 1px solid black;
 	font-weight: bold;
@@ -68,4 +90,12 @@ table.grid div.field.invalid {
 	background: url(images/but.png) no-repeat;
 	color: red;
 	font-weight: bold;
+}
+
+.gwt-Button {
+	margin: 1em !important;
+}
+
+table.stats {
+	width: 50%;
 }

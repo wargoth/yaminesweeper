@@ -11,16 +11,33 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class OptionsDialog {
-	private DialogBox dialogBox;
+	private DialogBox dialogBox = new DialogBox();
 
 	public OptionsDialog(final Minefield parent) {
-		dialogBox = new DialogBox();
 		dialogBox.setText("Options");
 
 		final RadioButton easyRadio = new RadioButton("sizes", "Easy");
 		final RadioButton mediumRadio = new RadioButton("sizes", "Medium");
 		final RadioButton hardRadio = new RadioButton("sizes", "Hard");
 		final RadioButton customRadio = new RadioButton("sizes", "Custom");
+
+		switch (parent.getLevel().getLevel()) {
+		case Level.EASY:
+			easyRadio.setValue(true);
+			break;
+
+		case Level.MEDIUM:
+			mediumRadio.setValue(true);
+			break;
+
+		case Level.HARD:
+			hardRadio.setValue(true);
+			break;
+
+		default:
+			customRadio.setValue(true);
+			break;
+		}
 
 		VerticalPanel sizesLayout = new VerticalPanel();
 		sizesLayout.add(easyRadio);
@@ -50,29 +67,14 @@ public class OptionsDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (easyRadio.getValue()) {
-					parent.setCols(8);
-					parent.setRows(8);
-					parent.setMinesNum(10);
+					parent.getLevel().setLevel(Level.EASY);
 				} else if (mediumRadio.getValue()) {
-					parent.setCols(16);
-					parent.setRows(16);
-					parent.setMinesNum(40);
+					parent.getLevel().setLevel(Level.MEDIUM);
 				} else if (hardRadio.getValue()) {
-					parent.setCols(31);
-					parent.setRows(16);
-					parent.setMinesNum(99);
+					parent.getLevel().setLevel(Level.HARD);
 				} else if (customRadio.getValue()) {
-					int cols = Math.min(100, Math.max(3, Integer
-							.parseInt(colsTextBox.getValue())));
-					int rows = Math.min(100, Math.max(3, Integer
-							.parseInt(rowsTextBox.getValue())));
-					int maxMines = cols * rows / 4;
-					int minesNum = Math.min(maxMines, Math.max(1, Integer
-							.parseInt(minesTextBox.getValue())));
-
-					parent.setCols(cols);
-					parent.setRows(rows);
-					parent.setMinesNum(minesNum);
+					parent.getLevel().setParams(colsTextBox.getValue(),
+							rowsTextBox.getValue(), minesTextBox.getValue());
 				}
 
 				parent.init();

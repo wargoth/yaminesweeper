@@ -16,6 +16,20 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class Minesweeper implements EntryPoint {
+	public static class User {
+		public static final native boolean isLoggedIn() /*-{
+			return $wnd.is_logged_in;
+		}-*/;
+
+		public static final native String getEmail() /*-{
+			return $wnd.user_email;
+		}-*/;
+
+		public static final native String getLoginUrl() /*-{
+			return $wnd.login_url;
+		}-*/;
+	}
+
 	public void onModuleLoad() {
 		// set uncaught exception handler
 		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {

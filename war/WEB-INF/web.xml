@@ -4,10 +4,20 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>Minesweeper.html</welcome-file>
-  </welcome-file-list>
+
+	<servlet>
+		<servlet-name>statsServiceImpl</servlet-name>
+		<servlet-class>minesweeper.server.StatsServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>statsServiceImpl</servlet-name>
+		<url-pattern>/minesweeper/stats</url-pattern>
+	</servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Minesweeper.jsp</welcome-file>
+	</welcome-file-list>
 
 </web-app>

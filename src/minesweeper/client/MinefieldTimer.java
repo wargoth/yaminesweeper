@@ -40,4 +40,8 @@ public class MinefieldTimer extends Timer {
 		NumberFormat fmt = NumberFormat.getFormat("00");
 		widget.setText(fmt.format(mins) + ":" + fmt.format(secs));
 	}
+
+	public int getTime() {
+		return ticks;
+	}
 }

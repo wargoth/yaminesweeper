@@ -15,6 +15,7 @@ public class Minefield {
 
 	private MinesLeft minesLeft = new MinesLeft();
 	private int closedFieldsLeft;
+	private Level level = new Level(this);
 
 	public void setCols(int cols) {
 		this.cols = cols;
@@ -48,10 +49,14 @@ public class Minefield {
 		return minesLeft;
 	}
 	
+	public Level getLevel() {
+		return level;
+	}
+
 	private void decrementClosedFieldsLeft() {
 		closedFieldsLeft--;
-		
-		if(closedFieldsLeft == 0) {
+
+		if (closedFieldsLeft - minesNum == 0) {
 			timer.stop();
 			showCongratsDialog();
 		}
@@ -161,8 +166,8 @@ public class Minefield {
 	public void showOptionsDialog() {
 		new OptionsDialog(this);
 	}
-	
+
 	private void showCongratsDialog() {
-		new CongratsDialog();
+		new CongratsDialog(this);
 	}
 }
