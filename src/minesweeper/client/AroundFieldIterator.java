@@ -49,12 +49,4 @@ public class AroundFieldIterator implements Iterator<Field> {
 	@Override
 	public void remove() {
 	}
-
-	public int getCol() {
-		return col + curent_col;
-	}
-
-	public int getRow() {
-		return row + curent_row;
-	}
 }

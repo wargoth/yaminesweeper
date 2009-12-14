@@ -28,12 +28,4 @@ public class CollectionIterator implements Iterator<Field> {
 	@Override
 	public void remove() {
 	}
-
-	public int getCol() {
-		return col;
-	}
-
-	public int getRow() {
-		return row;
-	}
 }

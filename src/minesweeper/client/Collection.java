@@ -1,5 +1,6 @@
 package minesweeper.client;
 
+import java.util.Iterator;
 
 public class Collection implements Iterable<Field> {
 	private int cols = 0;
@@ -11,11 +12,11 @@ public class Collection implements Iterable<Field> {
 	}
 
 	@Override
-	public CollectionIterator iterator() {
+	public Iterator<Field> iterator() {
 		return new CollectionIterator(this);
 	}
-	
-	public AroundFieldIterator aroundFieldIterator(int col, int row) {
+
+	public Iterator<Field> aroundFieldIterator(int col, int row) {
 		return new AroundFieldIterator(col, row, this);
 	}
 
@@ -36,8 +37,8 @@ public class Collection implements Iterable<Field> {
 	public Field get(int col, int row) {
 		return collection[col][row];
 	}
-	
-	public void set(int col, int row, Field field) {
-		collection[col][row] = field;
+
+	public void set(Field field) {
+		collection[field.getCol()][field.getRow()] = field;
 	}
 }

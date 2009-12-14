@@ -71,9 +71,12 @@ public class Minesweeper implements EntryPoint {
 		minefield.init();
 
 		Grid sidePanel = new Grid(2, 2);
+		
+		Label timerLabel = new Label();
+		Minefield.getTimer().addListener(timerLabel);
 
 		sidePanel.setWidget(0, 0, new Label("Time:"));
-		sidePanel.setWidget(0, 1, minefield.getTimer().getWidget());
+		sidePanel.setWidget(0, 1, timerLabel);
 		sidePanel.setWidget(1, 0, new Label("Mines:"));
 		sidePanel.setWidget(1, 1, minefield.getMinesLeft().getWidget());
 

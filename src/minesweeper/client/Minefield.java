@@ -1,9 +1,15 @@
 package minesweeper.client;
 
+import java.util.Iterator;
+
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Grid;
 
 public class Minefield {
+	private static GameTimer timer = new GameTimer();
+
 	private int cols = 8; // 8,16,31
 	private int rows = 8; // 8,16,16
 	private int minesNum = 10; // 10,40,99
@@ -11,11 +17,10 @@ public class Minefield {
 	private Collection collection;
 	private Grid grid;
 
-	private MinefieldTimer timer = new MinefieldTimer();
-
 	private MinesLeft minesLeft = new MinesLeft();
 	private int closedFieldsLeft;
 	private Level level = new Level(this);
+	private boolean is_active;
 
 	public void setCols(int cols) {
 		this.cols = cols;
@@ -41,23 +46,19 @@ public class Minefield {
 		return minesNum;
 	}
 
-	public MinefieldTimer getTimer() {
-		return timer;
-	}
-
 	public MinesLeft getMinesLeft() {
 		return minesLeft;
 	}
-	
+
 	public Level getLevel() {
 		return level;
 	}
 
-	private void decrementClosedFieldsLeft() {
+	public void decrementClosedFieldsLeft() {
 		closedFieldsLeft--;
 
 		if (closedFieldsLeft - minesNum == 0) {
-			timer.stop();
+			getTimer().stop();
 			showCongratsDialog();
 		}
 	}
@@ -65,16 +66,25 @@ public class Minefield {
 	public void init() {
 		closedFieldsLeft = cols * rows;
 		minesLeft.setNum(minesNum);
-		timer.init();
+		getTimer().init();
+		is_active = true;
 
 		initCollection();
-		initFields();
 		initWidget();
 	}
 
 	private void initCollection() {
 		collection = new Collection(cols, rows);
+		initFields();
 		populateMines();
+	}
+
+	private void initFields() {
+		for (int col = 0; col < getCols(); col++) {
+			for (int row = 0; row < getRows(); row++) {
+				collection.set(new Field(this, col, row));
+			}
+		}
 	}
 
 	private void populateMines() {
@@ -83,19 +93,8 @@ public class Minefield {
 			do {
 				col = (int) Math.round(Math.random() * (double) (cols - 1));
 				row = (int) Math.round(Math.random() * (double) (rows - 1));
-			} while (collection.get(col, row) != null);
-			collection.set(col, row, new Field(this, col, row, Field.MINE));
-		}
-	}
-
-	private void initFields() {
-		for (CollectionIterator iterator = collection.iterator(); iterator
-				.hasNext();) {
-			Field field = iterator.next();
-			if (field == null) {
-				field = new Field(this, iterator.getCol(), iterator.getRow(), 0);
-				collection.set(iterator.getCol(), iterator.getRow(), field);
-			}
+			} while (collection.get(col, row).isMine());
+			collection.get(col, row).setIsMine();
 		}
 	}
 
@@ -104,11 +103,10 @@ public class Minefield {
 		grid.clear();
 		grid.resize(rows, cols);
 
-		for (CollectionIterator iterator = collection.iterator(); iterator
+		for (Iterator<Field> iterator = collection.iterator(); iterator
 				.hasNext();) {
 			Field field = iterator.next();
-			grid.setWidget(iterator.getRow(), iterator.getCol(), field
-					.getWidget());
+			grid.setWidget(field.getRow(), field.getCol(), field.getWidget());
 		}
 	}
 
@@ -117,30 +115,46 @@ public class Minefield {
 			grid = new Grid() {
 				@Override
 				public void onBrowserEvent(Event event) {
+					if (!is_active) {
+						return;
+					}
+
+					switch (event.getTypeInt()) {
+					case Event.ONMOUSEUP:
+					case Event.ONMOUSEDOWN:
+						if (DOM.eventGetCurrentTarget(event) == getElement()) {
+							elementClicked(event);
+						}
+						break;
+					}
+
 					event.stopPropagation();
 					event.preventDefault();
 				}
 			};
-			grid.sinkEvents(Event.ONCONTEXTMENU | Event.ONMOUSEDOWN | Event.ONDBLCLICK);
+			grid.sinkEvents(Event.ONCONTEXTMENU | Event.ONMOUSEDOWN
+					| Event.ONDBLCLICK | Event.ONMOUSEUP);
 			grid.addStyleName("grid");
 		}
 		return grid;
 	}
 
-	public void open(Field current_field) {
-		decrementClosedFieldsLeft();
+	protected void elementClicked(Event event) {
+		Element element = DOM.eventGetTarget(event);
 
-		if (current_field.isEmpty()) {
-			for (AroundFieldIterator iterator = collection.aroundFieldIterator(
-					current_field.getCol(), current_field.getRow()); iterator
-					.hasNext();) {
-				Field field = iterator.next();
+		for (Iterator<Field> iterator = collection.iterator(); iterator
+				.hasNext();) {
+			Field field = iterator.next();
 
-				field.open();
+			if (field.getWidget().getElement() == element) {
+				field.clicked(event);
+				break;
 			}
 		}
-		grid.setWidget(current_field.getRow(), current_field.getCol(),
-				current_field.getWidget());
+	}
+
+	public void open(Field field) {
+		grid.setWidget(field.getRow(), field.getCol(), field.getWidget());
 	}
 
 	public Collection getCollection() {
@@ -148,19 +162,25 @@ public class Minefield {
 	}
 
 	public void boom() {
-		timer.stop();
+		getTimer().stop();
+		deactivate();
 
-		for (CollectionIterator iterator = collection.iterator(); iterator
+		for (Iterator<Field> iterator = collection.iterator(); iterator
 				.hasNext();) {
 			Field field = iterator.next();
-			field.deactivate();
 
 			if (field.isMine() || field.isFlaged()) {
-				field.setOpened(true);
-				grid.setWidget(field.getRow(), field.getCol(), field
-						.getWidget());
+				field.forceOpen();
 			}
 		}
+	}
+
+	public static GameTimer getTimer() {
+		return timer;
+	}
+
+	private void deactivate() {
+		is_active = false;
 	}
 
 	public void showOptionsDialog() {
