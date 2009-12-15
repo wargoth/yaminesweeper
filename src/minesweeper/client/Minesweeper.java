@@ -70,15 +70,15 @@ public class Minesweeper implements EntryPoint {
 		final Minefield minefield = new Minefield();
 		minefield.init();
 
-		Grid sidePanel = new Grid(2, 2);
+		Grid infoPanel = new Grid(2, 2);
 		
 		Label timer = new Label(GameTimer.getInstance().getText());
 		GameTimer.getInstance().addListener(timer);
 
-		sidePanel.setWidget(0, 0, new Label("Time:"));
-		sidePanel.setWidget(0, 1, timer);
-		sidePanel.setWidget(1, 0, new Label("Mines:"));
-		sidePanel.setWidget(1, 1, minefield.getMinesLeft().getWidget());
+		infoPanel.setWidget(0, 0, new Label("Time:"));
+		infoPanel.setWidget(0, 1, timer);
+		infoPanel.setWidget(1, 0, new Label("Mines:"));
+		infoPanel.setWidget(1, 1, minefield.getMinesLeft().getWidget());
 
 		HorizontalPanel menuLayout = new HorizontalPanel();
 
@@ -106,7 +106,7 @@ public class Minesweeper implements EntryPoint {
 
 		layout.add(minefield.getWidget(), DockPanel.CENTER);
 		layout.add(menuLayout, DockPanel.NORTH);
-		layout.add(sidePanel, DockPanel.EAST);
+		layout.add(infoPanel, DockPanel.NORTH);
 
 		RootPanel.get("root").add(layout);
 	}

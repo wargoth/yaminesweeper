@@ -2,6 +2,8 @@ package minesweeper.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
@@ -12,6 +14,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class OptionsDialog {
 	private DialogBox dialogBox = new DialogBox();
+	private TextBox rowsTextBox;
+	private TextBox colsTextBox;
+	private TextBox minesTextBox;
 
 	public OptionsDialog(final Minefield parent) {
 		dialogBox.setText("Options");
@@ -20,6 +25,18 @@ public class OptionsDialog {
 		final RadioButton mediumRadio = new RadioButton("sizes", "Medium");
 		final RadioButton hardRadio = new RadioButton("sizes", "Hard");
 		final RadioButton customRadio = new RadioButton("sizes", "Custom");
+
+		ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				updateState(customRadio.getValue());
+			}
+		};
+
+		easyRadio.addValueChangeHandler(handler);
+		mediumRadio.addValueChangeHandler(handler);
+		hardRadio.addValueChangeHandler(handler);
+		customRadio.addValueChangeHandler(handler);
 
 		switch (parent.getLevel().getLevel()) {
 		case Level.EASY:
@@ -45,13 +62,13 @@ public class OptionsDialog {
 		sizesLayout.add(hardRadio);
 		sizesLayout.add(customRadio);
 
-		final TextBox rowsTextBox = new TextBox();
+		rowsTextBox = new TextBox();
 		rowsTextBox.setValue(parent.getRows() + "");
 
-		final TextBox colsTextBox = new TextBox();
+		colsTextBox = new TextBox();
 		colsTextBox.setValue(parent.getCols() + "");
 
-		final TextBox minesTextBox = new TextBox();
+		minesTextBox = new TextBox();
 		minesTextBox.setValue(parent.getMinesNum() + "");
 
 		Button cancelButton = new Button("Cancel");
@@ -95,7 +112,15 @@ public class OptionsDialog {
 		layout.setWidget(5, 0, cancelButton);
 		layout.setWidget(5, 1, applyButton);
 
+		updateState(parent.getLevel().getLevel() == Level.CUSTOM);
+
 		dialogBox.setWidget(layout);
 		dialogBox.center();
+	}
+
+	private void updateState(boolean enabled) {
+		rowsTextBox.setEnabled(enabled);
+		colsTextBox.setEnabled(enabled);
+		minesTextBox.setEnabled(enabled);
 	}
 }

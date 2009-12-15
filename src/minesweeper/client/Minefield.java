@@ -55,8 +55,13 @@ public class Minefield {
 
 		if (closedFieldsLeft - minesNum == 0) {
 			GameTimer.getInstance().stop();
+			deactivate();
 			showCongratsDialog();
 		}
+	}
+
+	private void deactivate() {
+		is_active = false;
 	}
 
 	public void init() {
@@ -115,16 +120,15 @@ public class Minefield {
 			grid = new Grid() {
 				@Override
 				public void onBrowserEvent(Event event) {
-					if (!is_active) {
-						return;
-					}
-					switch (event.getTypeInt()) {
-					case Event.ONMOUSEUP:
-					case Event.ONMOUSEDOWN:
-						if (DOM.eventGetCurrentTarget(event) == getElement()) {
-							elementClicked(event);
+					if (is_active) {
+						switch (event.getTypeInt()) {
+						case Event.ONMOUSEUP:
+						case Event.ONMOUSEDOWN:
+							if (DOM.eventGetCurrentTarget(event) == getElement()) {
+								elementClicked(event);
+							}
+							break;
 						}
-						break;
 					}
 					event.stopPropagation();
 					event.preventDefault();
@@ -173,7 +177,7 @@ public class Minefield {
 
 	public void boom() {
 		GameTimer.getInstance().stop();
-		is_active = false;
+		deactivate();
 
 		for (CollectionIterator iterator = collection.iterator(); iterator
 				.hasNext();) {
