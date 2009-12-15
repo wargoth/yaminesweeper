@@ -44,8 +44,8 @@ public class Level {
 	}
 
 	public void setParams(int cols, int rows, int minesNum) {
-		int _cols = Math.min(300, Math.max(3, cols));
-		int _rows = Math.min(300, Math.max(3, rows));
+		int _cols = Math.min(50, Math.max(3, cols));
+		int _rows = Math.min(50, Math.max(3, rows));
 		int _maxMines = cols * rows / 4;
 		int _minesNum = Math.min(_maxMines, Math.max(1, minesNum));
 

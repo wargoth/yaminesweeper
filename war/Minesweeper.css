@@ -1,7 +1,6 @@
 body {
 	margin:0;
 	padding: 0;
-	background: #cde !important;
 	font-size: 14px !important;
 }
 
@@ -20,6 +19,7 @@ h1 {
 	padding: 1em 0;
 	margin: 0;
 	font-style: italic;
+	font-family: Times, serif !important;
 }
 
 table.grid {
