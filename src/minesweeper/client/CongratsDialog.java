@@ -41,8 +41,7 @@ public class CongratsDialog {
 		}
 
 		layout.setWidget(1, 0, new Label("Time:"));
-		layout.setWidget(1, 1, new Label(parent.getTimer().getWidget()
-				.getText()));
+		layout.setWidget(1, 1, new Label(GameTimer.getInstance().getText()));
 		layout.setWidget(2, 1, okButton);
 
 		dialogBox.setWidget(layout);
@@ -55,8 +54,8 @@ public class CongratsDialog {
 		if (parent.getLevel().getLevel() != Level.CUSTOM
 				&& Minesweeper.User.isLoggedIn()) {
 			StatsServiceAsync statsService = GWT.create(StatsService.class);
-			statsService.saveStats(parent.getLevel().getLevel(), parent
-					.getTimer().getTime(), new AsyncCallback<Void>() {
+			statsService.saveStats(parent.getLevel().getLevel(), GameTimer
+					.getInstance().getTime(), new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
 				}

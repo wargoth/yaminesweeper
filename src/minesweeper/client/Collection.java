@@ -37,7 +37,7 @@ public class Collection implements Iterable<Field> {
 		return collection[col][row];
 	}
 	
-	public void set(int col, int row, Field field) {
-		collection[col][row] = field;
+	public void set(Field field) {
+		collection[field.getCol()][field.getRow()] = field;
 	}
 }

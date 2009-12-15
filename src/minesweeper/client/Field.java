@@ -1,12 +1,7 @@
 package minesweeper.client;
 
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,6 +16,9 @@ public class Field {
 	private Minefield parent;
 	private Button button;
 	private boolean is_flaged;
+	private Widget currentWidget;
+	private boolean trigger_left;
+	private boolean trigger_right;
 
 	public Field(Minefield parent, int col, int row, int minesNum) {
 		this.minesNum = minesNum;
@@ -99,20 +97,18 @@ public class Field {
 
 	public Widget getWidget() {
 		if (!is_opened) {
-			return getButtonWidget();
-		}
-
-		if (isMine()) {
-			return getMineWidget();
+			currentWidget = getButtonWidget();
+		} else if (isMine()) {
+			currentWidget = getMineWidget();
 		} else if (!isEmpty()) {
-			return getFieldWidget();
+			currentWidget = getFieldWidget();
+		} else if (isFlaged()) {
+			currentWidget = getInvalidFlagedWidget();
+		} else {
+			currentWidget = getEmptyWidget();
 		}
 
-		if (isFlaged()) {
-			return getInvalidFlagedWidget();
-		} else {
-			return getEmptyWidget();
-		}
+		return currentWidget;
 	}
 
 	private Widget getInvalidFlagedWidget() {
@@ -129,23 +125,6 @@ public class Field {
 	private Widget getButtonWidget() {
 		button = new Button();
 		button.setStyleName("field-button");
-		button.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				parent.getTimer().start();
-				open();
-			}
-		});
-		button.addMouseDownHandler(new MouseDownHandler() {
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				switch (event.getNativeButton()) {
-				case NativeEvent.BUTTON_RIGHT:
-					toggleFlag();
-					break;
-				}
-			}
-		});
 
 		return button;
 	}
@@ -163,17 +142,6 @@ public class Field {
 		widget.setText(getMinesNum() + "");
 		widget.setStyleName("field num-" + getMinesNum());
 
-		widget.addMouseUpHandler(new MouseUpHandler() {
-			@Override
-			public void onMouseUp(MouseUpEvent event) {
-				switch (event.getNativeButton()) {
-				case NativeEvent.BUTTON_MIDDLE:
-					openAround();
-					break;
-				}
-			}
-		});
-
 		return widget;
 	}
 
@@ -187,10 +155,6 @@ public class Field {
 			Field field = iterator.next();
 			field.open();
 		}
-	}
-
-	public void deactivate() {
-		button.setEnabled(false);
 	}
 
 	public void toggleFlag() {
@@ -215,5 +179,58 @@ public class Field {
 
 	public boolean isEmpty() {
 		return minesNum == 0;
+	}
+
+	public Widget getCurrentWidget() {
+		return currentWidget;
+	}
+
+	public void clicked(Event event) {
+		switch (event.getTypeInt()) {
+		case Event.ONMOUSEUP:
+			onMouseUp(event);
+			break;
+
+		case Event.ONMOUSEDOWN:
+			onMouseDown(event);
+			break;
+		}
+	}
+
+	private void onMouseDown(Event event) {
+		if (!is_opened) {
+			switch (event.getButton()) {
+			case NativeEvent.BUTTON_RIGHT:
+				toggleFlag();
+				break;
+			}
+		} else if (!isMine() && !isEmpty()) {
+			switch (event.getButton()) {
+			case NativeEvent.BUTTON_LEFT:
+				trigger_left = true;
+				break;
+			case NativeEvent.BUTTON_RIGHT:
+				trigger_right = true;
+				break;
+			}
+		}
+	}
+
+	private void onMouseUp(Event event) {
+		if (!is_opened) {
+			switch (event.getButton()) {
+			case NativeEvent.BUTTON_LEFT:
+				GameTimer.getInstance().start();
+				open();
+				break;
+			}
+		} else if (!isMine() && !isEmpty()) {
+			if (trigger_left && trigger_right) {
+				openAround();
+			}
+
+			trigger_left = false;
+			trigger_right = false;
+		}
 	}
 }
