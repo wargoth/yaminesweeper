@@ -1,3 +1,3 @@
 # yaminesweeper
 Yet another minesweeper game
-See http://yaminesweeper.appspot.com/
+See https://yaminesweeper-hrd.appspot.com/
